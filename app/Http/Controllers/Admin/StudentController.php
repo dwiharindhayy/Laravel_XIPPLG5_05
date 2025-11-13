@@ -63,13 +63,17 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $student = Student::findOrFail($id);
+
         $validated = $request->validate([
-            'nis' => 'required',
+            'nis' => 'required|unique:students,nis,' . $id,
             'nama_lengkap' => 'required',
             'jenis_kelamin' => 'required',
-            'nisn' => 'required',
+            'nisn' => 'required|unique:students,nisn,' . $id,
         ]);
+
         $student->update($validated);
+
         return redirect()->route('admin.students.index')->with('success', 'Data siswa berhasil diperbarui!');
     }
 
@@ -78,6 +82,9 @@ class StudentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $student = Student::findOrFail($id);
+        $student->delete();
+
+        return redirect()->route('admin.students.index')->with('success', 'Data siswa berhasil dihapus!');
     }
 }
